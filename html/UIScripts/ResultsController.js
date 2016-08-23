@@ -2,15 +2,9 @@ app.controller('resultsController',['$http','$interval','$scope','technophiliaSe
 function resultsController(http,interval,$scope,technophiliaService){
 		
 	$scope.myData = [
-	                 {ProjectNo: '1', Rating: 0},{ProjectNo: '2', Rating: 0},
-	                 {ProjectNo: '3', Rating: 0},{ProjectNo: '4', Rating: 0},
-	                 {ProjectNo: '5', Rating: 0},{ProjectNo: '6', Rating: 0},
-	                 {ProjectNo: '7', Rating:0},{ProjectNo: '8', Rating: 0},
-	                 {ProjectNo: '9', Rating: 0},{ProjectNo: '10', Rating: 0},
-	                 {ProjectNo: '11', Rating: 0},{ProjectNo: '12', Rating: 0},
-	                 {ProjectNo: '13', Rating: 0},{ProjectNo: '14', Rating: 0},
-	                 {ProjectNo: '15', Rating: 0},{ProjectNo: '16', Rating: 0},
-	                 {ProjectNo: '17', Rating: 0},{ProjectNo: '18', Rating: 0}
+	                 {ProjectName: 'Team 1', Rating: 0},{ProjectName: 'Team 2', Rating: 0},
+	                 {ProjectName: 'Team 3', Rating: 0},{ProjectName: 'Team 4', Rating: 0},
+	                 {ProjectName: 'Team 5', Rating: 0},{ProjectName: 'Team 6', Rating: 0}
 	             ];
 	
 	$scope.leaders = {};
@@ -23,6 +17,7 @@ function resultsController(http,interval,$scope,technophiliaService){
 	$scope.currentProjectAverageRatingTrend = [];
 	$scope.currentProjectVotingDistribution = [];
 	$scope.currentProjectNo = null;
+	$scope.currentProjectName = null;
 	
 	$scope.prepareDataForBarChart = function(data){
 		for(var index=0;index<data.length;index++){
@@ -64,6 +59,7 @@ function resultsController(http,interval,$scope,technophiliaService){
 			if(data[0]['ProjectNo'] && (parseInt(data[0]['ProjectNo']) !== +$scope.currentProjectNo)){//check if project no is there in the json or not
 				$scope.currentProjectAverageRatingTrend = [];
 				$scope.currentProjectNo = parseInt(data[0]['ProjectNo']);
+				$scope.currentProjectName = data[0]['ProjectName'];
 			}
 			if (data[0]['AverageRating']) {
 				$scope.currentProjectAverageRatingTrend.push({

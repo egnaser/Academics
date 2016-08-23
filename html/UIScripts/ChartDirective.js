@@ -58,7 +58,7 @@ app.directive( 'crD3Bars', [
         //Render graph based on 'data'
         scope.render = function(data) {
           //Set our scale's domains
-          x.domain(data.map(function(d) { return d.ProjectNo; }));
+          x.domain(data.map(function(d) { return d.ProjectName; }));
           var min = d3.min(data, function(d) { return d.Rating; });
           var max = d3.max(data, function(d) { return d.Rating; });
           y.domain([parseFloat(min) - 0.09,parseFloat(max) + 0.09]);
@@ -84,7 +84,7 @@ app.directive( 'crD3Bars', [
           bars.enter()
             .append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return x(d.ProjectNo); })
+            .attr("x", function(d) { return x(d.ProjectName); })
             .attr("width",x.rangeBand())
             .style("fill", function(d, i) { return colors[(i%colors.length)]; });
           
