@@ -10,7 +10,7 @@
  		$averageRating = 0;
 	
 	
-	$thresholdNumberOfVotes = 10;
+	$thresholdNumberOfVotes = 100;
 	$query = "SELECT P.project_id as ProjectNo,P.project_name as ProjectName, avg(R.rating) as AverageRating,count(R.user_id) as Voters,
 	((avg(R.rating) * count(R.user_id) + $averageRating * $thresholdNumberOfVotes)/($thresholdNumberOfVotes+count(R.user_id))) as Rating FROM
 	  project as P left join rating as R on P.project_id=R.project_id group by P.project_id";

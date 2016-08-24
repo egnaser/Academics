@@ -1,76 +1,78 @@
-<?php
-
-require_once("connect.php");
-	$userId='Hello1';
-	if(isset($_COOKIE["technophilia2016"]))
-{	
-	$userId=$_COOKIE["technophilia2016"];	
-}
-else
-{
-	//set the lifetime to a suitable time.
-	setcookie("technophilia2016", uniqid("Hello".mt_rand(1000,10000),true), time()+60*60*24*7, "/","", 0); 	
-}
-	$query = "SELECT project.project_id, project.project_name,r.rating FROM project left outer join (select * from rating where rating.user_id ='".
-	$userId."') as r on r.project_id = project.project_id ";
-    $currentUserRatings = mysql_query($query) or die("could not display " .mysql_error());
-	//$num = mysql_num_rows($currentUserRatings);
-	
-	class UserRatings
-	{
-		public $projectId=0;
-		public $projectName='';
-		public $rating=0;
-	}
-
-	$objectArray=[];
-	while($resultArray = mysql_fetch_array($currentUserRatings,MYSQL_ASSOC))
-	{
-		//echo "Project id : ".$resultArray['project_id']." Project Name : ".$resultArray['project_name']." Rating : ".$resultArray['rating'];
-		$userRating = new UserRatings();
-		$userRating->projectId = $resultArray['project_id'];
-		$userRating->projectName = $resultArray['project_name'];
-		$userRating->rating=$resultArray['rating'];
-		array_push($objectArray,$userRating);
-	}
-
-	echo json_encode($objectArray);	
+<?php 
+require_once("Akshay/connect.php");
+//require_once("Akshay/index.php");
 ?>
-<html>
- <head>
-  <title>Technophilia 2016</title>
- </head>
- <body>
- <div>
- <h1 style ="text-align:center;">Technophilia 2016 Contesting Projects</h1>
-	<div style="width: 1100px; margin:0 auto;">
-	<form method = "GET" action="rating.php">
-		<div name="project_1" value="1">
-			<input type="checkbox" name = "project_id" value="1"/>Joseph and Team
+<html lang="en" ng-app="myApp">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="description" content="Analysis">
+
+    <title>Analysis</title>
+
+    <script src="content/js/jquery-1.12.3.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src = "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script src = "http:////ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-route.js"></script>
+      
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<!-- Local files -->
+<script src = "app.js"></script>
+<script src = "controllers/indexCtrl.js"></script>
+<script src = "controllers/indexAdminCtrl.js"></script>
+<script src = "service/dataService.js"></script>
+
+<link href="content/css/style.css" rel="stylesheet" />
+
+</head>
+<body style="margin: 15px 0 15px 0;background:whitesmoke;" ng-controller="indexCtrl">
+    
+    <!-- One item per row in smaller devices, two in larger -->
+    <div class="row" >
+		
+        <div ng-class="{'card':true, 'col-md-4':true, 'col-md-offset-1':true, 'col-sm-10':true, 'col-sm-offset-1':true, 'col-xs-10':true, 'col-xs-offset-1':true, 'col-xl-8':true,  'col-xl-offset-2':true, 'ms-card': group.projectId == currentProject }" 
+			 ng-repeat="group in groups" > 
 			
-		</div>
-		<br/>
-		<div>
-			<select name="project_rating" id="ratings">
-			<option value="0">--Select a Topic--</option>
-			<option value="5">This project should definitely be in Technophilia 2016</option>
-			<option value="3">I dont mind to see this project in Technophilia 2016</option>
-			<option value="1">Allow this project in Technophilia 2016 if there is any slot remainig</option>
-			<option value="0">This project should definitely not be in Technophilia 2016</option>
-			</select>
-			<!--<div style="display:inline-block; width:500px;"><input type = "checkbox" name ="checkbox1" value="5"/>This project should definitely be in Technophilia 2016</div>
-			<div style="display:inline-block; width:500px;"><input type = "checkbox" value="3"/>I dont mind to see this project in Technophilia 2016</div>
-			<div style="display:inline-block; width:500px;"><input type = "checkbox" value="1"/>Allow this project in Technophilia 2016 if there is any slot remainig</div>
-			<div style="display:inline-block; width:500px;"><input type = "checkbox" value="0"/>This project should definitely not be in Technophilia 2016</div>
-			-->
-			
-		</div>
-		<div>
-		<input type="submit" value="submit">
-		</div>
-	
-	</form>
+			<div id="pb_{{group.projectId}}" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="1" style="width: 100%;height:10px !important;display:none"></div>
+			<h2 >
+				{{group.projectName}}
+				<img style="float:right;margin-right:20px;" src="content/images/lovedIt.png" class="emoticons" ng-show="group.rating==4&&group.projectId < currentProject">
+				<img style="float:right;margin-right:20px;" src="content/images/smilingOpenMouth.png" class="emoticons" ng-show="group.rating==3&&group.projectId < currentProject">
+				<img style="float:right;margin-right:20px;" src="content/images/smilingSlightly.png" class="emoticons" ng-show="group.rating==2&&group.projectId < currentProject">
+				<img style="float:right;margin-right:20px;" src="content/images/expressionless.png" class="emoticons" ng-show="group.rating==1&&group.projectId < currentProject">
+				<img style="float:right;margin-right:20px;" src="content/images/frowningSlightly.png" class="emoticons" ng-show="group.rating==0&&group.projectId < currentProject">
+
+			</h2>
+			<hr style="margin:5px;padding:0;"/>
+           <div ng-show="group.projectId == currentProject">
+				<img src="content/images/lovedIt_bw.png" class="emoticons" ng-click="!(group.projectId==currentProject)||registerInput(group.projectId,4)" ng-show="group.rating!=4">
+				<img src="content/images/lovedIt.png" class="emoticons-selected" ng-click="!(group.projectId==currentProject)||registerInput(group.projectId,4)" ng-show="group.rating==4">
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<img src="content/images/smilingOpenMouth_bw.png" class="emoticons" ng-click="!(group.projectId==currentProject)||registerInput(group.projectId,3)" ng-show="group.rating!=3">
+				<img src="content/images/smilingOpenMouth.png" class="emoticons-selected" ng-click="!(group.projectId==currentProject)||registerInput(group.projectId,3)" ng-show="group.rating==3">
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<img src="content/images/smilingSlightly_bw.png" class="emoticons" ng-click="!(group.projectId==currentProject)||registerInput(group.projectId,2)" ng-show="group.rating!=2">	
+				<img src="content/images/smilingSlightly.png" class="emoticons-selected" ng-click="!(group.projectId==currentProject)||registerInput(group.projectId,2)" ng-show="group.rating==2">
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<img src="content/images/expressionless_bw.png" class="emoticons" ng-click="!(group.projectId==currentProject)||registerInput(group.projectId,1)" ng-show= "group.rating!=1">
+				<img src="content/images/expressionless.png" class="emoticons-selected" ng-click="!(group.projectId==currentProject)||registerInput(group.projectId,1)" ng-show="group.rating==1">
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<img src="content/images/frowningSlightly_bw.png" class="emoticons" ng-click="!(group.projectId==currentProject)||registerInput(group.projectId,0)" ng-show="group.rating!=0">
+				<img src="content/images/frowningSlightly.png" class="emoticons-selected" ng-click="!(group.projectId==currentProject)||registerInput(group.projectId,0)" ng-show="group.rating==0">
+				&nbsp;&nbsp;&nbsp;&nbsp;
+			</div>
 	</div>
- </div>
- </body>
-</html>		
+        
+    </div>
+    
+    
+</body>
+
+<style>
+
+</style>
+</html>
